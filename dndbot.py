@@ -3,7 +3,10 @@ import random
 import numpy
 from discord.ext import commands
 
-TOKEN = 'NzEzMDk4NzYzNzg2MjU2NDM0.XsbLAw.Y97QUk-R9TbutrbWkoYcZn5XLq8'
+token_file = open("data/token", "r")
+
+TOKEN = token_file.read()
+print(TOKEN)
 botprefix = '!'
 
 bot = commands.Bot(botprefix)
