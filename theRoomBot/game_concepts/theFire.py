@@ -6,6 +6,7 @@ async def set_timer(data, name, duration, channel, sleep_segments = 5):
         data.cooldown[name] = -1
         data.progress_msg_id[name] = -1
     if data.cooldown[name] == -1:
+        data.cooldown[name] = 0
         progress_bar = list('`' + '-' * sleep_segments + '`') # 10 * '-'
         if data.progress_msg_id[name] == -1:
             message = await channel.send(''.join(progress_bar))
@@ -20,23 +21,27 @@ async def set_timer(data, name, duration, channel, sleep_segments = 5):
         while sleep_segments > 0:
             await asyncio.sleep(segment_duration)
             sleep_segments -= 1
-            progress_bar[len(progress_bar) - sleep_segments - 2] = 'M'
+            progress_bar[len(progress_bar) - sleep_segments - 2] = '='
             await message.edit(content = ''.join(progress_bar))
         data.cooldown[name] = 1
     else:
-        channel.send("ERROR timer not reset")
+        await channel.send("ERROR timer not reset")
+
 
 async def darkness(data, channel):
-
-    light_messages = ["It is dark. Too dark.", "Shadows encroach.", "It flickers.", "Its light dims.", "The fire is warm."]
-
+    light_messages = ["It is dark. Too dark.", "Shadows encroach.", "It flickers.", "Its light dims.",
+                      "The fire is warm."]
     while True:
         if data.light_lvl > 0:
             data.light_lvl -= 1
             await channel.send(light_messages[data.light_lvl])
-        await asyncio.sleep(10)
+        await asyncio.sleep(20)
+
 
 async def stoke_fire(message, data, channel):
-    await channel.send(message.author.display_name + " stoke the fire.")
-    data.light_lvl = 5
-    await message.channel.send("The fire burns bright.")
+    if data.cooldown["stoke"] == 1:
+        await channel.send(message.author.display_name + " stoke the fire.")
+        data.light_lvl = 5
+        await message.channel.send("The fire burns bright.")
+        data.cooldown["stoke"] = -1
+        asyncio.create_task(set_timer(data, "stoke", 20, channel))

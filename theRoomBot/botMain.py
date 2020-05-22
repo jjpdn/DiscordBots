@@ -19,11 +19,14 @@ async def on_connect():
     # save main channel
     if bot.data.main_channel_id != -1:
         bot.main_channel = await bot.fetch_channel(bot.data.main_channel_id)
-
-        if bot.data.state > 0:
-            asyncio.create_task(theFire.darkness(bot.data, bot.main_channel))
     else:
         bot.main_channel = None
+
+    # startup any timers
+    if bot.data.state > 0:
+        asyncio.create_task(theFire.darkness(bot.data, bot.main_channel))
+        if bot.data.cooldown["stoke"] != 1:
+            asyncio.create_task(theFire.set_timer(bot.data, "stoke", 20, bot.main_channel))
 
     print("roombot ready!")
 
@@ -98,6 +101,9 @@ async def process_command(message):
                     return
 
                 bot.data.state = 1
+                bot.data.cooldown["stoke"] = 1
+                bot.data.progress_msg_id["stoke"] = -1
+
                 await theFire.stoke_fire(message, bot.data, bot.main_channel)
                 asyncio.create_task(theFire.darkness(bot.data, bot.main_channel))
 
