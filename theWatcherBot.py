@@ -7,16 +7,16 @@ from discord.ext import commands
 class Data(object):
     def __init__(self):
         self.main_channel = "test"
-        self.dm_name = ""
+        self.player_roles = []
         self.initialized = 0
 
 
 
 # --------------- BOT SETUP ------------------
 
-token_file = open("data/token", "r")
+token_file = open("data/watchertoken", "r")
 TOKEN = token_file.read()
-data_path = "data/data.json"
+data_path = "data/watcherdata.json"
 botprefix = '!'
 
 bot = commands.Bot(botprefix)

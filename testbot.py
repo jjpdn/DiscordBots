@@ -1,7 +1,7 @@
 import discord
 import random
 
-TOKEN = 'NzA1MTUwOTI5MzM4NjMwMTY1.XqnhZg.R5LeoaNJ54PpxUo0IlImMOBglWo'
+TOKEN = ''
 
 botprefix = '!'
 

@@ -2,7 +2,7 @@ import discord
 import random
 from discord.ext import commands
 
-TOKEN = 'NzA1MTUwOTI5MzM4NjMwMTY1.XqnhZg.R5LeoaNJ54PpxUo0IlImMOBglWo'
+TOKEN = ''
 botprefix = '!'
 
 bot = commands.Bot(botprefix)
