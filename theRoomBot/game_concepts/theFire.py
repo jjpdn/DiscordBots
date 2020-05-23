@@ -1,4 +1,14 @@
 import asyncio
+from theRoomBot import file_management
+
+fire_dimming_interval = 60
+
+
+def theFire_initialization(data, main_channel):
+    if data.state > 0:
+        asyncio.create_task(darkness(data, main_channel))
+        if data.cooldown["stoke"] != 1:
+            asyncio.create_task(set_timer(data, "stoke", 20, main_channel))
 
 async def set_timer(data, name, duration, channel, sleep_segments = 5):
     # add timer result to cooldowns
@@ -8,12 +18,8 @@ async def set_timer(data, name, duration, channel, sleep_segments = 5):
     if data.cooldown[name] == -1:
         data.cooldown[name] = 0
         progress_bar = list('`' + '-' * sleep_segments + '`') # 10 * '-'
-        if data.progress_msg_id[name] == -1:
-            message = await channel.send(''.join(progress_bar))
-            data.progress_msg_id[name] = message.id
-        else:
-            message = await channel.fetch_message(data.progress_msg_id[name])
-            await message.edit(content = ''.join(progress_bar))
+        message = await channel.send(''.join(progress_bar))
+        data.progress_msg_id[name] = message.id
 
         # count down in segments with length of segment_duration
         data.cooldown[name] = 0
@@ -24,6 +30,7 @@ async def set_timer(data, name, duration, channel, sleep_segments = 5):
             progress_bar[len(progress_bar) - sleep_segments - 2] = '='
             await message.edit(content = ''.join(progress_bar))
         data.cooldown[name] = 1
+        file_management.save(data)
     else:
         await channel.send("ERROR timer not reset")
 
@@ -35,7 +42,7 @@ async def darkness(data, channel):
         if data.light_lvl > 0:
             data.light_lvl -= 1
             await channel.send(light_messages[data.light_lvl])
-        await asyncio.sleep(20)
+        await asyncio.sleep(fire_dimming_interval)
 
 
 async def stoke_fire(message, data, channel):
