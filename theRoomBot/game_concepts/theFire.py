@@ -3,12 +3,18 @@ from theRoomBot import file_management
 
 fire_dimming_interval = 60
 
+message_dict = file_management.read_json("text/theFire.json")
+
+# Constants
+text_messages = message_dict = file_management.read_json("text/theFire.json")
+
 
 def theFire_initialization(data, main_channel):
     if data.state > 0:
         asyncio.create_task(darkness(data, main_channel))
         if data.cooldown["stoke"] != 1:
             asyncio.create_task(set_timer(data, "stoke", 20, main_channel))
+
 
 async def set_timer(data, name, duration, channel, sleep_segments = 5):
     # add timer result to cooldowns
@@ -36,12 +42,10 @@ async def set_timer(data, name, duration, channel, sleep_segments = 5):
 
 
 async def darkness(data, channel):
-    light_messages = ["It is dark. Too dark.", "Shadows encroach.", "It flickers.", "Its light dims.",
-                      "The fire is warm."]
     while True:
         if data.light_lvl > 0:
             data.light_lvl -= 1
-            await channel.send(light_messages[data.light_lvl])
+            await channel.send(text_messages["light" + str(data.light_lvl)])
         await asyncio.sleep(fire_dimming_interval)
 
 
@@ -49,6 +53,6 @@ async def stoke_fire(message, data, channel):
     if data.cooldown["stoke"] == 1:
         await channel.send(message.author.display_name + " stoke the fire.")
         data.light_lvl = 5
-        await message.channel.send("The fire burns bright.")
+        await message.channel.send(text_messages["light_5"])
         data.cooldown["stoke"] = -1
         asyncio.create_task(set_timer(data, "stoke", 20, channel))

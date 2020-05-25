@@ -1,5 +1,6 @@
 import asyncio
 from theRoomBot.game_concepts import theFire
+from theRoomBot.game_concepts import part1_forest
 from theRoomBot import file_management
 from discord.ext import commands
 
@@ -23,10 +24,7 @@ async def on_connect():
         bot.main_channel = None
 
     # startup any timers
-    if bot.data.state > 0:
-        asyncio.create_task(theFire.darkness(bot.data, bot.main_channel))
-        if bot.data.cooldown["stoke"] != 1:
-            asyncio.create_task(theFire.set_timer(bot.data, "stoke", 20, bot.main_channel))
+    theFire.theFire_initialization(bot.data, bot.main_channel)
 
     print("roombot ready!")
 
@@ -73,7 +71,7 @@ async def process_command(message):
         return
     else:
 
-        # /// Beginning ///
+        # /// Game Setup Commands ///
 
         if bot.data.state == 0:
             if cmd == "trytimer":
@@ -111,13 +109,11 @@ async def process_command(message):
 
                 return
 
+        # /// Game Phase 1: The Fire ///
+
         elif bot.data.state == 1:
-            if cmd == "light":
-                await theFire.stoke_fire(message, bot.data, bot.main_channel)
-
-                file_management.save(bot.data)
-
-                return
+            await part1_forest.part1_forest(cmd, modifiers, message, bot.data, bot.main_channel)
+            return
 
         await message.channel.send("Don't know this command!")
 
