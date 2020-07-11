@@ -1,4 +1,5 @@
 import asyncio
+from theRoomBot import xml_processing
 from theRoomBot import file_management
 
 fire_dimming_interval = 60
@@ -45,7 +46,7 @@ async def darkness(data, channel):
     while True:
         if data.light_lvl > 0:
             data.light_lvl -= 1
-            await channel.send(text_messages["light" + str(data.light_lvl)])
+            await xml_processing.send_loaded_message("light_" + str(data.light_lvl), text_messages, channel)
         await asyncio.sleep(fire_dimming_interval)
 
 
@@ -53,6 +54,6 @@ async def stoke_fire(message, data, channel):
     if data.cooldown["stoke"] == 1:
         await channel.send(message.author.display_name + " stoke the fire.")
         data.light_lvl = 5
-        await message.channel.send(text_messages["light_5"])
+        await xml_processing.send_loaded_message("light_5", text_messages, channel)
         data.cooldown["stoke"] = -1
         asyncio.create_task(set_timer(data, "stoke", 20, channel))

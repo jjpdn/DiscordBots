@@ -112,8 +112,9 @@ async def process_command(message):
         # /// Game Phase 1: The Fire ///
 
         elif bot.data.state == 1:
-            await part1_forest.part1_forest(cmd, modifiers, message, bot.data, bot.main_channel)
-            return
+            if await part1_forest.part1_forest(cmd, modifiers, message, bot.data, bot.main_channel) == True:
+                return
+
 
         await message.channel.send("Don't know this command!")
 

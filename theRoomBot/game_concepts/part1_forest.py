@@ -9,5 +9,8 @@ async def part1_forest(cmd, modifiers, message, data, main_channel):
 
         file_management.save(data)
 
-        return
+        return True
+
+
+    return False
 
